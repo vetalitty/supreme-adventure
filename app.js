@@ -15,13 +15,19 @@ async function main() {
   await doc.loadInfo(); // loads document properties and worksheets
   const sheet = doc.sheetsByIndex[0];
   await sheet.loadCells('A1:E11');
+
+  setInvoiceNumber(sheet);
+
+  await sheet.saveUpdatedCells();
+}
+
+function setInvoiceNumber(sheet) {
   let cell_InvoiceFromDate = sheet.getCell(5, 0);
   const dateStartOfWork = moment.utc(DATE_START_OF_WORK);
   const invoiceNumber = moment.utc().diff(dateStartOfWork, 'month') + 1;
   const currentDay = moment.utc().format('MMMM DD, YYYY');
   const invoiceFromDate = `Invoice № ${invoiceNumber} from ${currentDay}`;
   cell_InvoiceFromDate.value = invoiceFromDate;
-  await sheet.saveUpdatedCells();
 }
 
 main()
