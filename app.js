@@ -8,6 +8,17 @@ const {
   DATE_START_OF_WORK
 } = process.env;
 
+function setPeriod(sheet) {
+  let periodCell = sheet.getCell(8, 2);
+  const startOfPeriod = moment.utc().startOf('month').format('MMMM DD, YYYY');
+  const endOfPeriod = moment.utc().endOf('month').format('MMMM DD, YYYY');
+  const periodRowText = `${startOfPeriod} - ${endOfPeriod}`;
+  periodCell.value = periodRowText;
+  console.log('period:', periodRowText);
+}
+
+
+
 async function main() {
   const doc = new GoogleSpreadsheet(SHEET_ID);
 
@@ -17,17 +28,19 @@ async function main() {
   await sheet.loadCells('A1:E11');
 
   setInvoiceNumber(sheet);
+  setPeriod(sheet);
 
   await sheet.saveUpdatedCells();
 }
 
 function setInvoiceNumber(sheet) {
-  let cell_InvoiceFromDate = sheet.getCell(5, 0);
+  let invoiceFromDateCell = sheet.getCell(5, 0);
   const dateStartOfWork = moment.utc(DATE_START_OF_WORK);
   const invoiceNumber = moment.utc().diff(dateStartOfWork, 'month') + 1;
   const currentDay = moment.utc().format('MMMM DD, YYYY');
-  const invoiceFromDate = `Invoice № ${invoiceNumber} from ${currentDay}`;
-  cell_InvoiceFromDate.value = invoiceFromDate;
+  const invoiceRowText = `Invoice № ${invoiceNumber} from ${currentDay}`;
+  invoiceFromDateCell.value = invoiceRowText;
+  console.log('invoiceFromDateCell:', invoiceRowText);
 }
 
 main()
